@@ -1,6 +1,10 @@
 package com.ccsw.tutorial.author.model;
 
+import com.ccsw.tutorial.game.model.Game;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "author")
@@ -16,6 +20,9 @@ public class Author {
 
     @Column(name = "nationality")
     private String nationality;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private List<Game> games = new ArrayList<>();
 
     /**
      * @return id

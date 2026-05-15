@@ -108,6 +108,8 @@ public class LendingServiceImpl implements LendingService {
         for (LocalDate day = lending.getLoanDate(); !day.isAfter(lending.getReturnDate()); day = day.plusDays(1)) {
             int maxOverlap = 0;
             for (Lending l : customerLendings) {
+                if (l.getId().equals(lending.getId()))
+                    continue;
                 if (!(l.getLoanDate().isAfter(day) || l.getReturnDate().isBefore(day))) {
                     maxOverlap++;
                 }
@@ -138,8 +140,11 @@ public class LendingServiceImpl implements LendingService {
         Specification<Lending> spec = sameGame.and((loanDateGe.and(loanDateLe)).or(returnDateGe.and(returnDateLe)).or(loanDateLeLoanDate.and(returnDateGeReturnDate)));
 
         List<Lending> gameLendings = lendingRepository.findAll(spec);
-        if (!gameLendings.isEmpty())
-            throw new Exception("Game is already lent in this time period");
+        for (Lending l : gameLendings) {
+            if (!l.getId().equals(lending.getId()))
+                throw new Exception("Game is already lent in this time period");
+        }
+
     }
 
     /**

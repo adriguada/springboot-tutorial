@@ -3,7 +3,11 @@ package com.ccsw.tutorial.game.model;
 import com.ccsw.tutorial.author.model.Author;
 import com.ccsw.tutorial.category.model.Category;
 
+import com.ccsw.tutorial.lending.model.Lending;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ccsw
@@ -31,6 +35,9 @@ public class Game {
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
+
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
+    private List<Lending> lendings = new ArrayList<>();
 
     /**
      * @return id

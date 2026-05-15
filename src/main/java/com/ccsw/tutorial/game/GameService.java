@@ -28,4 +28,11 @@ public interface GameService {
      */
     void save(Long id, GameDto dto);
 
+    /**
+     * Get a {@link Game} entity by its Id
+     * @param id PK of the entity
+     * @return a {@link Game}
+     */
+    Game findById(Long id);
+
 }

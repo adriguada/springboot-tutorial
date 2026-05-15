@@ -70,3 +70,25 @@ VALUES ('Orlando');
 
 INSERT INTO customer(name)
 VALUES ('Miguel');
+
+-- Lending
+INSERT INTO lending(loan_date, return_date, game_id, customer_id)
+VALUES ('2026-05-01', '2026-05-05', 1, 1);
+
+INSERT INTO lending(loan_date, return_date, game_id, customer_id)
+VALUES ('2026-05-01', '2026-05-15', 2, 2);
+
+INSERT INTO lending(loan_date, return_date, game_id, customer_id)
+VALUES ('2026-05-05', '2026-05-10', 3, 1);
+
+INSERT INTO lending(loan_date, return_date, game_id, customer_id)
+VALUES ('2026-04-01', '2026-05-03', 4, 2);
+
+INSERT INTO lending(loan_date, return_date, game_id, customer_id)
+VALUES ('2026-04-01', '2026-05-20', 5, 4);
+
+INSERT INTO lending(loan_date, return_date, game_id, customer_id)
+VALUES ('2026-04-06', '2026-05-25', 6, 3);
+
+INSERT INTO lending(loan_date, return_date, game_id, customer_id)
+VALUES ('2026-04-01', '2026-05-01', 1, 2);

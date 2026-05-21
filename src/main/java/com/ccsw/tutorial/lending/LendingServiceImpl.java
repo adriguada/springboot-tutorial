@@ -1,6 +1,8 @@
 package com.ccsw.tutorial.lending;
 
 import com.ccsw.tutorial.common.criteria.SearchCriteria;
+import com.ccsw.tutorial.common.error.exceptions.DeleteResourceException;
+import com.ccsw.tutorial.common.error.exceptions.ValidationException;
 import com.ccsw.tutorial.customer.CustomerService;
 import com.ccsw.tutorial.game.GameService;
 import com.ccsw.tutorial.lending.model.Lending;
@@ -58,19 +60,15 @@ public class LendingServiceImpl implements LendingService {
 
         BeanUtils.copyProperties(dto, lending, "id", "game", "customer");
 
-        // Comprobar que loanDate < returnDate
         checkValidDatesOrder(lending);
 
-        // Comprobar que la reserva es de menos de 14 días
         checkDateRangeDays(lending);
 
         lending.setCustomer(customerService.findById(dto.getCustomer().getId()));
         lending.setGame(gameService.findById(dto.getGame().getId()));
 
-        // Comprobar que el juego no está reservado para nadie más en el rango de días deseado
         checkGameNotLent(lending);
 
-        // Comprobar que el cliente no tiene reservados dos juegos en un día
         checkCustomerLendingLimit(lending);
 
         lendingRepository.save(lending);
@@ -78,13 +76,13 @@ public class LendingServiceImpl implements LendingService {
 
     public void checkDateRangeDays(Lending lending) throws Exception {
         if (ChronoUnit.DAYS.between(lending.getLoanDate(), lending.getReturnDate()) > 14) {
-            throw new Exception("Cannot lend a game for more than 14 days");
+            throw new ValidationException("Cannot lend a game for more than 14 days");
         }
     }
 
     public void checkValidDatesOrder(Lending lending) throws Exception {
         if (lending.getReturnDate().isBefore(lending.getLoanDate())) {
-            throw new Exception("Return date should be greater than loan start date");
+            throw new ValidationException("Return date should be greater than loan start date");
         }
     }
 
@@ -116,7 +114,7 @@ public class LendingServiceImpl implements LendingService {
             }
 
             if (maxOverlap >= 2)
-                throw new Exception("Customer cannot have more games lent in this time period");
+                throw new ValidationException("Customer cannot have more games lent in this time period");
         }
     }
 
@@ -142,7 +140,7 @@ public class LendingServiceImpl implements LendingService {
         List<Lending> gameLendings = lendingRepository.findAll(spec);
         for (Lending l : gameLendings) {
             if (!l.getId().equals(lending.getId()))
-                throw new Exception("Game is already lent in this time period");
+                throw new ValidationException("Game is already lent in this time period");
         }
 
     }
@@ -156,6 +154,6 @@ public class LendingServiceImpl implements LendingService {
             lendingRepository.deleteById(id);
 
         else
-            throw new Exception("Lending not found");
+            throw new DeleteResourceException("Lending not found");
     }
 }

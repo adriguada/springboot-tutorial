@@ -1,10 +1,13 @@
 package com.ccsw.tutorial.customer;
 
+import com.ccsw.tutorial.common.error.exceptions.DeleteResourceException;
+import com.ccsw.tutorial.common.error.exceptions.ValidationException;
 import com.ccsw.tutorial.customer.model.Customer;
 import com.ccsw.tutorial.customer.model.CustomerDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -47,7 +50,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (findById(id) != null)
             customerRepository.deleteById(id);
         else
-            throw new Exception("Customer not found");
+            throw new DeleteResourceException("Customer not found");
     }
 
     /**
@@ -57,8 +60,8 @@ public class CustomerServiceImpl implements CustomerService {
     public void save(CustomerDto dto) throws Exception {
         // Comprobar que el nombre no existe
         String name = dto.getName();
-        if (findByName(name) != null)
-            throw new Exception("Name is already registered");
+        if (findByName(name) != null && !Objects.equals(findByName(name).getId(), dto.getId()))
+            throw new ValidationException("Name is already registered");
 
         Customer customer;
         if (dto.getId() == null)

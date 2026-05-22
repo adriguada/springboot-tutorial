@@ -89,20 +89,16 @@ public class LendingServiceImpl implements LendingService {
     public void checkCustomerLendingLimit(Lending lending) throws Exception {
         LendingSpecification sameCustomer = new LendingSpecification(new SearchCriteria("customer.id", ":", lending.getCustomer().getId()));
 
-        LendingSpecification loanDateGe = new LendingSpecification(new SearchCriteria("loanDate", ">:", lending.getLoanDate()));
-        LendingSpecification loanDateLe = new LendingSpecification(new SearchCriteria("loanDate", "<:", lending.getReturnDate()));
-
-        LendingSpecification returnDateGe = new LendingSpecification(new SearchCriteria("returnDate", ">:", lending.getLoanDate()));
-        LendingSpecification returnDateLe = new LendingSpecification(new SearchCriteria("returnDate", "<:", lending.getReturnDate()));
+        LendingSpecification loanDateBtwn = new LendingSpecification(new SearchCriteria("loanDate", "between", lending.getLoanDate(), lending.getReturnDate()));
+        LendingSpecification returnDateBtwn = new LendingSpecification(new SearchCriteria("returnDate", "between", lending.getLoanDate(), lending.getReturnDate()));
 
         LendingSpecification loanDateLeLoanDate = new LendingSpecification(new SearchCriteria("loanDate", "<:", lending.getLoanDate()));
         LendingSpecification returnDateGeReturnDate = new LendingSpecification(new SearchCriteria("returnDate", ">:", lending.getReturnDate()));
 
-        Specification<Lending> spec = sameCustomer.and((loanDateGe.and(loanDateLe)).or(returnDateGe.and(returnDateLe)).or(loanDateLeLoanDate.and(returnDateGeReturnDate)));
+        Specification<Lending> spec = sameCustomer.and(loanDateBtwn.or(returnDateBtwn).or(loanDateLeLoanDate.and(returnDateGeReturnDate)));
+
         List<Lending> customerLendings = lendingRepository.findAll(spec);
 
-        // Igual tiene una solución con sliding window para reducir de O(n2) a O(n),
-        // pero tengo algo de prisa
         for (LocalDate day = lending.getLoanDate(); !day.isAfter(lending.getReturnDate()); day = day.plusDays(1)) {
             int maxOverlap = 0;
             for (Lending l : customerLendings) {
@@ -126,16 +122,14 @@ public class LendingServiceImpl implements LendingService {
     public void checkGameNotLent(Lending lending) throws Exception {
         LendingSpecification sameGame = new LendingSpecification(new SearchCriteria("game.id", ":", lending.getGame().getId()));
 
-        LendingSpecification loanDateGe = new LendingSpecification(new SearchCriteria("loanDate", ">:", lending.getLoanDate()));
-        LendingSpecification loanDateLe = new LendingSpecification(new SearchCriteria("loanDate", "<:", lending.getReturnDate()));
+        LendingSpecification loanDateBtwn = new LendingSpecification(new SearchCriteria("loanDate", "between", lending.getLoanDate(), lending.getReturnDate()));
 
-        LendingSpecification returnDateGe = new LendingSpecification(new SearchCriteria("returnDate", ">:", lending.getLoanDate()));
-        LendingSpecification returnDateLe = new LendingSpecification(new SearchCriteria("returnDate", "<:", lending.getReturnDate()));
+        LendingSpecification returnDateBtwn = new LendingSpecification(new SearchCriteria("returnDate", "between", lending.getLoanDate(), lending.getReturnDate()));
 
         LendingSpecification loanDateLeLoanDate = new LendingSpecification(new SearchCriteria("loanDate", "<:", lending.getLoanDate()));
         LendingSpecification returnDateGeReturnDate = new LendingSpecification(new SearchCriteria("returnDate", ">:", lending.getReturnDate()));
 
-        Specification<Lending> spec = sameGame.and((loanDateGe.and(loanDateLe)).or(returnDateGe.and(returnDateLe)).or(loanDateLeLoanDate.and(returnDateGeReturnDate)));
+        Specification<Lending> spec = sameGame.and(loanDateBtwn.or(returnDateBtwn).or(loanDateLeLoanDate.and(returnDateGeReturnDate)));
 
         List<Lending> gameLendings = lendingRepository.findAll(spec);
         for (Lending l : gameLendings) {

@@ -203,7 +203,7 @@ public class LendingIT {
         dto.setReturnDate(dto.getLoanDate().plusDays(15));
 
         ResponseEntity<?> res = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, res.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode());
     }
 
     @Test
@@ -213,7 +213,7 @@ public class LendingIT {
         dto.setReturnDate(dto.getLoanDate().minusDays(1));
 
         ResponseEntity<?> res = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, res.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode());
     }
 
     @Test
@@ -263,7 +263,7 @@ public class LendingIT {
         dto.setCustomer(customerDto);
 
         ResponseEntity<?> res = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, res.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode());
     }
 
     @Test
@@ -296,7 +296,7 @@ public class LendingIT {
         dto.setCustomer(customerDto);
 
         ResponseEntity<?> res = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, res.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode());
     }
 
     // con análisis de valores límite
@@ -345,7 +345,7 @@ public class LendingIT {
         dto.setCustomer(customerDto);
 
         ResponseEntity<?> res = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.PUT, new HttpEntity<>(dto), Void.class);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, res.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode());
     }
 
 }

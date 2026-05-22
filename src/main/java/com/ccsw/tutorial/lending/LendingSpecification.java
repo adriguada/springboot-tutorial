@@ -15,23 +15,39 @@ public class LendingSpecification implements Specification<Lending> {
         this.criteria = criteria;
     }
 
+    // clean codeado
     @Override
     public Predicate toPredicate(Root<Lending> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-        if (criteria.getOperation().equalsIgnoreCase(":") && criteria.getValue() != null) {
-            Path<String> path = getPath(root);
-            if (path.getJavaType() == String.class) {
-                return builder.like(path, "%" + criteria.getValue() + "%");
-            } else {
-                return builder.equal(path, criteria.getValue());
-            }
-        } else if (criteria.getOperation().equalsIgnoreCase(">:") && criteria.getValue() != null) {
-            Path<LocalDate> path = getPath(root);
-            return builder.greaterThanOrEqualTo(path, (LocalDate) criteria.getValue());
-        } else if (criteria.getOperation().equalsIgnoreCase("<:") && criteria.getValue() != null) {
-            Path<LocalDate> path = getPath(root);
-            return builder.lessThanOrEqualTo(path, (LocalDate) criteria.getValue());
+        if (criteria.getValue() == null) {
+            return null;
         }
-        return null;
+
+        Path<?> path = getPath(root);
+        String operation = criteria.getOperation();
+
+        switch (operation) {
+        case ":": {
+            if (path.getJavaType() == String.class) {
+                return builder.like(path.as(String.class), "%" + criteria.getValue() + "%");
+            }
+            return builder.equal(path, criteria.getValue());
+        }
+
+        case ">:":
+            return builder.greaterThanOrEqualTo((Path<LocalDate>) path, (LocalDate) criteria.getValue());
+
+        case "<:":
+            return builder.lessThanOrEqualTo((Path<LocalDate>) path, (LocalDate) criteria.getValue());
+
+        case "between":
+            return builder.between((Path<LocalDate>) path, (LocalDate) criteria.getValue(), (LocalDate) criteria.getValue2());
+
+        case "<>":
+            return builder.notEqual(path, criteria.getValue());
+
+        default:
+            return null;
+        }
     }
 
     private <T> Path<T> getPath(Root<Lending> root) {

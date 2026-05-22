@@ -1,5 +1,6 @@
 package com.ccsw.tutorial.lending;
 
+import com.ccsw.tutorial.common.error.exceptions.DeleteResourceException;
 import com.ccsw.tutorial.customer.CustomerServiceImpl;
 import com.ccsw.tutorial.customer.model.Customer;
 import com.ccsw.tutorial.customer.model.CustomerDto;
@@ -48,7 +49,7 @@ public class LendingTest {
     public void deleteNotExistingShouldInternalError() {
         when(lendingRepository.findById(NOT_EXISTING_ID)).thenReturn(Optional.empty());
 
-        assertThrows(Exception.class, () -> lendingService.delete(NOT_EXISTING_ID));
+        assertThrows(DeleteResourceException.class, () -> lendingService.delete(NOT_EXISTING_ID));
     }
 
     @Test

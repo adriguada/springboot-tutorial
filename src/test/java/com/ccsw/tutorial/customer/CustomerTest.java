@@ -1,5 +1,7 @@
 package com.ccsw.tutorial.customer;
 
+import com.ccsw.tutorial.common.error.exceptions.DeleteResourceException;
+import com.ccsw.tutorial.common.error.exceptions.ValidationException;
 import com.ccsw.tutorial.customer.model.Customer;
 import com.ccsw.tutorial.customer.model.CustomerDto;
 import org.junit.jupiter.api.Test;
@@ -113,7 +115,7 @@ public class CustomerTest {
 
         when(customerRepository.findByName(EXISTING_NAME)).thenReturn(Optional.of(mock(Customer.class)));
 
-        assertThrows(Exception.class, () -> customerService.save(dto));
+        assertThrows(ValidationException.class, () -> customerService.save(dto));
     }
 
     @Test
@@ -142,7 +144,7 @@ public class CustomerTest {
 
         when(customerRepository.findByName(EXISTING_NAME)).thenReturn(Optional.of(foundByName));
 
-        assertThrows(Exception.class, () -> customerService.save(dto));
+        assertThrows(ValidationException.class, () -> customerService.save(dto));
     }
 
     // Customer delete
@@ -159,6 +161,6 @@ public class CustomerTest {
     public void deleteNonExistingCustomerShouldThrowException() throws Exception {
         when(customerRepository.findById(NOT_EXISTING_CUSTOMER_ID)).thenReturn(Optional.empty());
 
-        assertThrows(Exception.class, () -> customerService.delete(NOT_EXISTING_CUSTOMER_ID));
+        assertThrows(DeleteResourceException.class, () -> customerService.delete(NOT_EXISTING_CUSTOMER_ID));
     }
 }
